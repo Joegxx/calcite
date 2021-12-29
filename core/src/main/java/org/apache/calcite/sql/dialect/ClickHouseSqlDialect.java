@@ -51,32 +51,41 @@ public class ClickHouseSqlDialect extends SqlDialect {
 
   public static final SqlDialect DEFAULT = new ClickHouseSqlDialect(DEFAULT_CONTEXT);
 
-  /** Creates a ClickHouseSqlDialect. */
+  /**
+   * Creates a ClickHouseSqlDialect.
+   */
   public ClickHouseSqlDialect(Context context) {
     super(context);
   }
 
-  @Override public boolean supportsCharSet() {
+  @Override
+  public boolean supportsCharSet() {
     return false;
   }
 
-  @Override public boolean supportsNestedAggregations() {
+  @Override
+  public boolean supportsNestedAggregations() {
     return false;
   }
 
-  @Override public boolean supportsWindowFunctions() {
+  @Override
+  public boolean supportsWindowFunctions() {
     return false;
   }
 
-  @Override public boolean supportsAliasedValues() {
+  @Override
+  public boolean supportsAliasedValues() {
     return false;
   }
 
-  @Override public CalendarPolicy getCalendarPolicy() {
+  @Override
+  public CalendarPolicy getCalendarPolicy() {
     return CalendarPolicy.SHIFT;
   }
 
-  @Override public @Nullable SqlNode getCastSpec(RelDataType type) {
+  @Override
+  public @Nullable
+  SqlNode getCastSpec(RelDataType type) {
     if (type instanceof BasicSqlType) {
       SqlTypeName typeName = type.getSqlTypeName();
       switch (typeName) {
@@ -110,7 +119,8 @@ public class ClickHouseSqlDialect extends SqlDialect {
   private static SqlDataTypeSpec createSqlDataTypeSpecByName(String typeAlias,
       SqlTypeName typeName) {
     SqlBasicTypeNameSpec spec = new SqlBasicTypeNameSpec(typeName, SqlParserPos.ZERO) {
-      @Override public void unparse(SqlWriter writer, int leftPrec, int rightPrec) {
+      @Override
+      public void unparse(SqlWriter writer, int leftPrec, int rightPrec) {
         // unparse as an identifier to ensure that type names are cased correctly
         writer.identifier(typeAlias, true);
       }
@@ -118,7 +128,8 @@ public class ClickHouseSqlDialect extends SqlDialect {
     return new SqlDataTypeSpec(spec, SqlParserPos.ZERO);
   }
 
-  @Override public void unparseDateTimeLiteral(SqlWriter writer,
+  @Override
+  public void unparseDateTimeLiteral(SqlWriter writer,
       SqlAbstractDateTimeLiteral literal, int leftPrec, int rightPrec) {
     String toFunc;
     if (literal instanceof SqlDateLiteral) {
@@ -135,7 +146,8 @@ public class ClickHouseSqlDialect extends SqlDialect {
     writer.literal(toFunc + "('" + literal.toFormattedString() + "')");
   }
 
-  @Override public void unparseOffsetFetch(SqlWriter writer, @Nullable SqlNode offset,
+  @Override
+  public void unparseOffsetFetch(SqlWriter writer, @Nullable SqlNode offset,
       @Nullable SqlNode fetch) {
     requireNonNull(fetch, "fetch");
 
@@ -153,7 +165,8 @@ public class ClickHouseSqlDialect extends SqlDialect {
     writer.endList(frame);
   }
 
-  @Override public void unparseCall(SqlWriter writer, SqlCall call,
+  @Override
+  public void unparseCall(SqlWriter writer, SqlCall call,
       int leftPrec, int rightPrec) {
     if (call.getOperator() == SqlStdOperatorTable.SUBSTRING) {
       RelToSqlConverterUtil.specialOperatorByName("substring")
@@ -194,7 +207,7 @@ public class ClickHouseSqlDialect extends SqlDialect {
    * Unparses datetime floor for ClickHouse.
    *
    * @param writer Writer
-   * @param call Call
+   * @param call   Call
    */
   private static void unparseFloor(SqlWriter writer, SqlCall call) {
     final SqlLiteral timeUnitNode = call.operand(1);
